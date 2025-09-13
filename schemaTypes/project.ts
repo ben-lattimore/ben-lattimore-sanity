@@ -32,5 +32,19 @@ export default defineType({
       title: 'Reverse Colour of Text',
       type: 'boolean',
     }),
+    defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'AI', value: 'AI' },
+          { title: 'Web Development', value: 'Web Development' }
+        ],
+        layout: 'radio'
+      },
+      initialValue: 'AI',
+      validation: (Rule) => Rule.required()
+    }),
   ],
 })
