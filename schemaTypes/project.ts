@@ -32,11 +32,5 @@ export default defineType({
       title: 'Reverse Colour of Text',
       type: 'boolean',
     }),
-    defineField({
-      name: 'projectImages',
-      title: 'Carousel of Project Images',
-      type: 'array',
-      of: [{ type: 'image' }],
-    }),
   ],
 })
