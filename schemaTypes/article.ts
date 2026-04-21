@@ -39,6 +39,13 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'showDownloads',
+      title: 'Show download options',
+      type: 'boolean',
+      description: 'Offer readers Markdown / PDF downloads at the end of the article.',
+      initialValue: false,
+    }),
+    defineField({
       name: 'body',
       title: 'Body',
       type: 'array',
