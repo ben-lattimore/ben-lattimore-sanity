@@ -1,9 +1,22 @@
-# Sanity Clean Content Studio
+# benlattimore.com — Sanity Studio
 
-Congratulations, you have now installed the Sanity Content Studio, an open-source real-time content editing environment connected to the Sanity backend.
+Content studio for [benlattimore.com](https://www.benlattimore.com). Project `9cci858w`, dataset `production`. The site itself is the companion `ben-lattimore-frontend` repo.
 
-Now you can do the following things:
+## Development
 
-- [Read “getting started” in the docs](https://www.sanity.io/docs/introduction/getting-started?utm_source=readme)
-- [Join the community Slack](https://slack.sanity.io/?utm_source=readme)
-- [Extend and build plugins](https://www.sanity.io/docs/content-studio/extending?utm_source=readme)
+```bash
+npm install
+npm run dev          # Studio at http://localhost:3333
+npm run build
+npm run lint
+npm run deploy       # deploy the Studio to Sanity hosting
+```
+
+## Schemas (`schemaTypes/`)
+
+- `home`: the single home-page document (intro text, LinkedIn, email)
+- `project`: portfolio entries. A project with a `body` gets its own page at `/projects/[slug]`
+- `article`: long-form writing at `/writing/[slug]`
+- `richText.ts`: the block set shared by project and article bodies
+
+When you change a schema, update the matching query in the frontend's `src/lib/queries.ts` and its types in `src/types`.

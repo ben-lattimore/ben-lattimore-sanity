@@ -1,4 +1,8 @@
-import { defineField, defineType } from 'sanity'
+import {defineField, defineType} from 'sanity'
+import {richTextBlocks} from './richText'
+
+const hasBody = (document?: Record<string, unknown>) =>
+  Array.isArray(document?.body) && document.body.length > 0
 
 export default defineType({
   name: 'project',
@@ -15,11 +19,17 @@ export default defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
+      description: 'Only needed if the project has a body write-up (it becomes /projects/[slug]).',
       options: {
         source: 'clientName',
         maxLength: 96,
       },
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) =>
+        Rule.custom((slug, context) =>
+          hasBody(context.document) && !slug?.current
+            ? 'A slug is required when the project has a body write-up.'
+            : true,
+        ),
     }),
     defineField({
       name: 'subtitle',
@@ -38,95 +48,25 @@ export default defineType({
       type: 'url',
       description: 'Live link to the project. Optional if a body write-up is provided.',
       validation: (Rule) =>
-        Rule.custom((url, context) => {
-          const body = (context.document?.body as unknown[]) ?? [];
-          if (!url && body.length === 0) {
-            return 'A project must have either a live URL or a body write-up (or both).';
-          }
-          return true;
-        }),
+        Rule.custom((url, context) =>
+          !url && !hasBody(context.document)
+            ? 'A project must have either a live URL or a body write-up (or both).'
+            : true,
+        ),
     }),
     defineField({
       name: 'body',
       title: 'Body',
       type: 'array',
-      description: 'Optional 100–400 word write-up. If present, the project card links to a detail page at /projects/[slug].',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'H2', value: 'h2' },
-            { title: 'H3', value: 'h3' },
-            { title: 'Quote', value: 'blockquote' },
-          ],
-          lists: [
-            { title: 'Bullet', value: 'bullet' },
-            { title: 'Numbered', value: 'number' },
-          ],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-              { title: 'Code', value: 'code' },
-            ],
-            annotations: [
-              {
-                name: 'link',
-                type: 'object',
-                title: 'Link',
-                fields: [
-                  {
-                    name: 'href',
-                    type: 'url',
-                    title: 'URL',
-                  },
-                ],
-              },
-            ],
-          },
-        },
-        {
-          type: 'image',
-          options: { hotspot: true },
-          fields: [
-            {
-              name: 'alt',
-              type: 'string',
-              title: 'Alt text',
-              description: 'Describe the image for screen readers and SEO.',
-            },
-            {
-              name: 'caption',
-              type: 'string',
-              title: 'Caption',
-            },
-          ],
-        },
-        {
-          type: 'object',
-          name: 'divider',
-          title: 'Divider',
-          fields: [
-            {
-              name: 'variant',
-              type: 'string',
-              hidden: true,
-              initialValue: 'line',
-            },
-          ],
-          preview: {
-            prepare: () => ({ title: '— — — — — —', subtitle: 'Section divider' }),
-          },
-        },
-      ],
+      description:
+        'Optional 100–400 word write-up. If present, the project card links to a detail page at /projects/[slug].',
+      of: richTextBlocks,
     }),
     defineField({
       name: 'backgroundColor',
       title: 'Background Colour',
       type: 'string',
-      validation: (Rule) =>
-        Rule.regex(/^#[0-9A-Fa-f]{6}$/).error('Must be a valid hex code'),
+      validation: (Rule) => Rule.regex(/^#[0-9A-Fa-f]{6}$/).error('Must be a valid hex code'),
     }),
     defineField({
       name: 'reverseTextColor',
@@ -139,20 +79,20 @@ export default defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'AI', value: 'AI' },
-          { title: 'Web Development', value: 'Web Development' }
+          {title: 'AI', value: 'AI'},
+          {title: 'Web Development', value: 'Web Development'},
         ],
-        layout: 'radio'
+        layout: 'radio',
       },
       initialValue: 'AI',
-      validation: (Rule) => Rule.required()
+      validation: (Rule) => Rule.required(),
     }),
   ],
   orderings: [
     {
       title: 'Client (A–Z)',
       name: 'clientAsc',
-      by: [{ field: 'clientName', direction: 'asc' }],
+      by: [{field: 'clientName', direction: 'asc'}],
     },
   ],
   preview: {

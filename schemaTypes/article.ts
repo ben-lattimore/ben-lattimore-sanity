@@ -1,4 +1,5 @@
-import { defineField, defineType } from 'sanity'
+import {defineField, defineType} from 'sanity'
+import {richTextBlocks} from './richText'
 
 export default defineType({
   name: 'article',
@@ -24,9 +25,9 @@ export default defineType({
       type: 'slug',
       options: {
         source: (doc) => {
-          const title = (doc.title as string) ?? '';
-          const subtitle = (doc.subtitle as string) ?? '';
-          return subtitle ? `${title} ${subtitle}` : title;
+          const title = (doc.title as string) ?? ''
+          const subtitle = (doc.subtitle as string) ?? ''
+          return subtitle ? `${title} ${subtitle}` : title
         },
         maxLength: 96,
       },
@@ -49,82 +50,14 @@ export default defineType({
       name: 'body',
       title: 'Body',
       type: 'array',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'H2', value: 'h2' },
-            { title: 'H3', value: 'h3' },
-            { title: 'Quote', value: 'blockquote' },
-          ],
-          lists: [
-            { title: 'Bullet', value: 'bullet' },
-            { title: 'Numbered', value: 'number' },
-          ],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-              { title: 'Code', value: 'code' },
-            ],
-            annotations: [
-              {
-                name: 'link',
-                type: 'object',
-                title: 'Link',
-                fields: [
-                  {
-                    name: 'href',
-                    type: 'url',
-                    title: 'URL',
-                  },
-                ],
-              },
-            ],
-          },
-        },
-        {
-          type: 'image',
-          options: { hotspot: true },
-          fields: [
-            {
-              name: 'alt',
-              type: 'string',
-              title: 'Alt text',
-              description: 'Describe the image for screen readers and SEO.',
-            },
-            {
-              name: 'caption',
-              type: 'string',
-              title: 'Caption',
-            },
-          ],
-        },
-        {
-          type: 'object',
-          name: 'divider',
-          title: 'Divider',
-          fields: [
-            {
-              name: 'variant',
-              type: 'string',
-              hidden: true,
-              initialValue: 'line',
-            },
-          ],
-          preview: {
-            prepare: () => ({ title: '— — — — — —', subtitle: 'Section divider' }),
-          },
-        },
-      ],
+      of: richTextBlocks,
     }),
   ],
   orderings: [
     {
       title: 'Published (newest first)',
       name: 'publishedAtDesc',
-      by: [{ field: 'publishedAt', direction: 'desc' }],
+      by: [{field: 'publishedAt', direction: 'desc'}],
     },
   ],
   preview: {
