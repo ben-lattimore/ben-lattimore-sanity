@@ -38,6 +38,18 @@ export default defineType({
       description: 'Optional second line shown under the client name on the detail page.',
     }),
     defineField({
+      name: 'publishedAt',
+      title: 'Published At',
+      type: 'datetime',
+      description:
+        'When the write-up was published. Shown on the detail page and given to search engines and AI tools.',
+      hidden: ({document}) => !hasBody(document),
+      validation: (Rule) =>
+        Rule.custom((date, context) =>
+          hasBody(context.document) && !date ? 'Add a publish date for the write-up.' : true,
+        ).warning(),
+    }),
+    defineField({
       name: 'technologyUsed',
       title: 'Technology Used',
       type: 'string',
